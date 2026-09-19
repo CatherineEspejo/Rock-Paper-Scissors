@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A blue and pink Rock Paper Scissors game where you play against the computer.">
+  <title>Blue & Pink Rock Paper Scissors</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #142d62;
+      --blue: #3979ee;
+      --blue-soft: #dce9ff;
+      --pink: #ee5aa7;
+      --pink-soft: #ffe0f0;
+      --ink: #17213c;
+      --muted: #68738d;
+      --white: #fff;
+      --shadow: 0 24px 60px rgba(20, 45, 98, .18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      overflow-x: hidden;
+      font-family: Inter, ui-rounded, "Segoe UI", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 15%, rgba(238, 90, 167, .25), transparent 26rem),
+        radial-gradient(circle at 88% 84%, rgba(57, 121, 238, .27), transparent 29rem),
+        linear-gradient(145deg, #fff7fb, #edf4ff);
+    }
+
+    .game {
+      width: min(760px, 100%);
+      padding: clamp(24px, 5vw, 46px);
+      border: 1px solid rgba(57, 121, 238, .14);
+      border-radius: 32px;
+      background: rgba(255, 255, 255, .88);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--pink);
+      font-size: .8rem;
+      font-weight: 850;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2.1rem, 7vw, 4rem);
+      line-height: 1;
+      letter-spacing: -.055em;
+    }
+
+    .subtitle {
+      margin: 10px 0 24px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .score {
+      padding: 12px 8px;
+      border: 1px solid #e3e8f2;
+      border-radius: 16px;
+      background: var(--white);
+      text-align: center;
+    }
+
+    .score span {
+      display: block;
+      color: var(--muted);
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .score strong {
+      display: block;
+      margin-top: 2px;
+      color: var(--navy);
+      font-size: 1.45rem;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 2vw, 14px);
+    }
+
+    .choice {
+      min-width: 0;
+      aspect-ratio: 1;
+      padding: 10px;
+      border: 2px solid rgba(20, 45, 98, .08);
+      border-radius: clamp(18px, 4vw, 26px);
+      background: var(--white);
+      box-shadow: 0 9px 22px rgba(20, 45, 98, .1);
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 850;
+      transition: transform .16s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .choice:hover {
+      transform: translateY(-4px);
+      border-color: rgba(57, 121, 238, .42);
+      background: var(--blue-soft);
+    }
+
+    .choice:focus-visible,
+    .reset:focus-visible {
+      outline: 4px solid rgba(238, 90, 167, .35);
+      outline-offset: 3px;
+    }
+
+    .choice .emoji {
+      display: block;
+      margin-bottom: 7px;
+      font-size: clamp(3rem, 10vw, 5.4rem);
+      line-height: 1;
+      filter: drop-shadow(0 6px 7px rgba(20, 45, 98, .13));
+    }
+
+    .arena {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      min-height: 116px;
+      margin: 22px 0 12px;
+      padding: 15px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--blue-soft), var(--pink-soft));
+    }
+
+    .pick { text-align: center; }
+    .pick span { display: block; color: var(--muted); font-size: .76rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+    .pick strong { display: block; min-height: 58px; margin-top: 4px; font-size: 3rem; line-height: 1.15; }
+    .versus { color: var(--navy); font-weight: 900; }
+
+    .status {
+      min-height: 34px;
+      margin: 0;
+      color: var(--navy);
+      font-size: 1.15rem;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .rule {
+      margin: 8px 0 18px;
+      color: var(--muted);
+      font-size: .9rem;
+      text-align: center;
+    }
+
+    .reset {
+      display: block;
+      min-height: 46px;
+      margin: 0 auto;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      box-shadow: 0 8px 20px rgba(20, 45, 98, .22);
+      color: var(--white);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 850;
+      transition: transform .18s ease;
+    }
+
+    .reset:hover { transform: translateY(-2px); }
+    .win { animation: pop .42s ease; }
+
+    @keyframes pop {
+      50% { transform: scale(1.18) rotate(-4deg); }
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 11px; align-items: start; }
+      .game { margin-top: 6px; padding: 22px 16px; border-radius: 24px; }
+      .scoreboard { gap: 6px; }
+      .score { padding: 10px 4px; }
+      .choice { border-radius: 17px; }
+      .arena { min-height: 105px; }
+      .pick strong { font-size: 2.55rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="game">
+    <p class="eyebrow">You vs. Computer</p>
+    <h1>Rock Paper Scissors</h1>
+    <p class="subtitle">Choose your move. The computer will reveal its choice instantly.</p>
+
+    <section class="scoreboard" aria-label="Scoreboard">
+      <div class="score"><span>You</span><strong id="playerScore">0</strong></div>
+      <div class="score"><span>Draws</span><strong id="drawScore">0</strong></div>
+      <div class="score"><span>Computer</span><strong id="computerScore">0</strong></div>
+    </section>
+
+    <section class="choices" aria-label="Choose rock, paper, or scissors">
+      <button class="choice" data-choice="rock" type="button"><span class="emoji" aria-hidden="true">✊</span>Rock</button>
+      <button class="choice" data-choice="paper" type="button"><span class="emoji" aria-hidden="true">✋</span>Paper</button>
+      <button class="choice" data-choice="scissors" type="button"><span class="emoji" aria-hidden="true">✌️</span>Scissors</button>
+    </section>
+
+    <section class="arena" aria-label="Round choices">
+      <div class="pick"><span>You</span><strong id="playerPick" aria-live="polite">?</strong></div>
+      <div class="versus">VS</div>
+      <div class="pick"><span>Computer</span><strong id="computerPick" aria-live="polite">?</strong></div>
+    </section>
+
+    <p class="status" id="status" aria-live="polite">Make your first choice!</p>
+    <p class="rule">Rock beats scissors · Scissors beat paper · Paper beats rock</p>
+    <button class="reset" id="reset" type="button">Reset score</button>
+  </main>
+
+  <script>
+    const options = ['rock', 'paper', 'scissors'];
+    const emoji = { rock: '✊', paper: '✋', scissors: '✌️' };
+    const labels = { rock: 'Rock', paper: 'Paper', scissors: 'Scissors' };
+    const winsAgainst = { rock: 'scissors', paper: 'rock', scissors: 'paper' };
+
+    const playerScoreEl = document.querySelector('#playerScore');
+    const drawScoreEl = document.querySelector('#drawScore');
+    const computerScoreEl = document.querySelector('#computerScore');
+    const playerPickEl = document.querySelector('#playerPick');
+    const computerPickEl = document.querySelector('#computerPick');
+    const statusEl = document.querySelector('#status');
+    let score = { player: 0, draws: 0, computer: 0 };
+
+    function play(player) {
+      const computer = options[Math.floor(Math.random() * options.length)];
+      playerPickEl.textContent = emoji[player];
+      computerPickEl.textContent = emoji[computer];
+      playerPickEl.setAttribute('aria-label', `You chose ${labels[player]}`);
+      computerPickEl.setAttribute('aria-label', `Computer chose ${labels[computer]}`);
+
+      if (player === computer) {
+        score.draws += 1;
+        statusEl.textContent = `Draw! You both chose ${labels[player]}.`;
+        animate(playerPickEl, computerPickEl);
+      } else if (winsAgainst[player] === computer) {
+        score.player += 1;
+        statusEl.textContent = `You win! ${labels[player]} beats ${labels[computer]}. 🎉`;
+        animate(playerPickEl);
+      } else {
+        score.computer += 1;
+        statusEl.textContent = `Computer wins! ${labels[computer]} beats ${labels[player]}.`;
+        animate(computerPickEl);
+      }
+
+      playerScoreEl.textContent = score.player;
+      drawScoreEl.textContent = score.draws;
+      computerScoreEl.textContent = score.computer;
+    }
+
+    function animate(...elements) {
+      elements.forEach(element => {
+        element.classList.remove('win');
+        void element.offsetWidth;
+        element.classList.add('win');
+      });
+    }
+
+    function reset() {
+      score = { player: 0, draws: 0, computer: 0 };
+      playerScoreEl.textContent = '0';
+      drawScoreEl.textContent = '0';
+      computerScoreEl.textContent = '0';
+      playerPickEl.textContent = '?';
+      computerPickEl.textContent = '?';
+      playerPickEl.removeAttribute('aria-label');
+      computerPickEl.removeAttribute('aria-label');
+      statusEl.textContent = 'Make your first choice!';
+    }
+
+    document.querySelectorAll('.choice').forEach(button => {
+      button.addEventListener('click', () => play(button.dataset.choice));
+    });
+    document.querySelector('#reset').addEventListener('click', reset);
+  </script>
+</body>
+</html>
